@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Routine X</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="auth-container" id="auth-screen">
+    <section class="auth-card" aria-labelledby="auth-title">
+      <header class="auth-header">
+        <div class="auth-brand">
+          <span class="auth-logo" aria-hidden="true"></span>
+          <span>Routine X</span>
+        </div>
+
+        <h1 class="auth-title" id="auth-title">Entrar</h1>
+        <p class="auth-subtitle" id="auth-subtitle">
+          Acesse seu painel de rotina e produtividade.
+        </p>
+      </header>
+
+      <div class="auth-feedback" id="auth-feedback" aria-live="polite"></div>
+
+      <form class="auth-form" id="login-form">
+        <label class="auth-field" for="login-email">
+          <span>Email</span>
+          <input class="auth-input" id="login-email" type="email" autocomplete="email" placeholder="voce@email.com" required>
+        </label>
+
+        <label class="auth-field" for="login-password">
+          <span>Senha</span>
+          <div class="password-control">
+            <input class="auth-input" id="login-password" type="password" autocomplete="current-password" placeholder="Digite sua senha" required>
+            <button class="password-toggle" type="button" data-password-toggle="login-password" aria-label="Revelar senha" aria-pressed="false">
+              <span class="password-eye" aria-hidden="true"></span>
+            </button>
+          </div>
+        </label>
+
+        <button class="auth-button" type="submit">Entrar</button>
+      </form>
+
+      <form class="auth-form" id="signup-form" hidden>
+        <label class="auth-field" for="signup-name">
+          <span>Nome</span>
+          <input class="auth-input" id="signup-name" type="text" autocomplete="name" placeholder="Seu nome" required>
+        </label>
+
+        <label class="auth-field" for="signup-age">
+          <span>Idade</span>
+          <input class="auth-input" id="signup-age" type="number" min="1" max="120" placeholder="Sua idade" required>
+        </label>
+
+        <label class="auth-field" for="signup-email">
+          <span>Email</span>
+          <input class="auth-input" id="signup-email" type="email" autocomplete="email" placeholder="voce@email.com" required>
+        </label>
+
+        <label class="auth-field" for="signup-password">
+          <span>Senha</span>
+          <div class="password-control">
+            <input class="auth-input" id="signup-password" type="password" autocomplete="new-password" placeholder="Crie uma senha" required>
+            <button class="password-toggle" type="button" data-password-toggle="signup-password" aria-label="Revelar senha" aria-pressed="false">
+              <span class="password-eye" aria-hidden="true"></span>
+            </button>
+          </div>
+        </label>
+
+        <button class="auth-button" type="submit">Criar conta</button>
+      </form>
+
+      <footer class="auth-footer" id="auth-footer">
+        <span id="auth-footer-text">Novo por aqui?</span>
+        <button class="auth-link-button" id="auth-mode-button" type="button">Criar conta</button>
+      </footer>
+    </section>
+  </main>
+
+  <main class="dashboard-shell" id="dashboard-screen" hidden>
+    <aside class="dashboard-sidebar" aria-label="Navegação principal">
+      <div class="sidebar-logo">
+        <span class="sidebar-logo-mark" aria-hidden="true"></span>
+        <span>Routine X</span>
+      </div>
+
+      <button class="sidebar-user" id="sidebar-user-trigger" type="button" aria-label="Abrir configurações da conta">
+        <div class="sidebar-avatar" aria-hidden="true"></div>
+        <div>
+          <strong id="dashboard-user-name">Usuário</strong>
+          <span>Rotina ativa</span>
+        </div>
+      </button>
+
+      <nav class="sidebar-section" aria-label="Menu principal">
+        <span class="sidebar-label">Menu</span>
+        <button class="sidebar-link is-active" type="button">Dashboard</button>
+      </nav>
+
+      <div class="sidebar-section" aria-label="Categorias">
+        <span class="sidebar-label">Categorias</span>
+        <div class="category-list" id="category-list"></div>
+      </div>
+
+      <div class="sidebar-section" aria-label="Prioridade">
+        <span class="sidebar-label">Prioridade</span>
+        <div class="priority-list" id="priority-list">
+          <button class="category-filter is-active" type="button" data-priority="all">
+            <span class="category-dot" style="--dot-color: #a0aec0"></span>
+            Todas
+          </button>
+          <button class="category-filter" type="button" data-priority="Baixa">
+            <span class="category-dot" style="--dot-color: #65e4a3"></span>
+            Baixa
+          </button>
+          <button class="category-filter" type="button" data-priority="Média">
+            <span class="category-dot" style="--dot-color: #f4b740"></span>
+            Média
+          </button>
+          <button class="category-filter" type="button" data-priority="Alta">
+            <span class="category-dot" style="--dot-color: #ff6174"></span>
+            Alta
+          </button>
+        </div>
+      </div>
+
+      <button class="sidebar-logout" id="dashboard-logout" type="button">Sair</button>
+    </aside>
+
+    <section class="dashboard-main" aria-labelledby="daily-title">
+      <header class="dashboard-header">
+        <div>
+          <span class="dashboard-kicker">Dashboard</span>
+          <h1 id="daily-title">Visão Diária</h1>
+          <p id="current-date">Hoje</p>
+          <label class="date-filter" for="selected-date">
+            <span>Data selecionada</span>
+            <input id="selected-date" type="date">
+          </label>
+        </div>
+
+        <div class="header-actions">
+          <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Ativar tema claro">☾</button>
+          <div class="progress-card" aria-label="Progresso diário">
+          <strong id="progress-label">0/0 Concluídas - 0%</strong>
+          <span class="task-counter" id="task-counter">0 tarefas no dia</span>
+          <div class="progress-track">
+            <div class="progress-fill" id="progress-fill"></div>
+          </div>
+          </div>
+        </div>
+      </header>
+
+      <section class="timeline-section" aria-labelledby="timeline-title">
+        <div class="timeline-heading">
+          <h2 id="timeline-title">Linha do Tempo</h2>
+          <span id="filter-label">Todas as categorias</span>
+        </div>
+
+        <div class="timeline-list" id="timeline-list" aria-live="polite"></div>
+      </section>
+    </section>
+
+    <button class="floating-action" id="open-task-modal" type="button" aria-label="Nova tarefa">
+      <span>+</span>
+      <strong>Nova Tarefa</strong>
+    </button>
+
+    <div class="modal-backdrop" id="task-modal" hidden>
+      <section class="task-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-header">
+          <h2 id="modal-title">Nova Tarefa</h2>
+          <button class="modal-close" id="close-task-modal" type="button" aria-label="Fechar">x</button>
+        </div>
+
+        <form class="task-form" id="task-form">
+          <label>
+            <span>Nome/Título</span>
+            <input id="task-title" type="text" placeholder="Ex: Aula de matemática" required>
+          </label>
+
+          <label>
+            <span>Descrição curta</span>
+            <input id="task-description" type="text" placeholder="Ex: Revisar conteúdo do módulo 3">
+          </label>
+
+          <label>
+            <span>Data</span>
+            <input id="task-date" type="date" required>
+          </label>
+
+          <label>
+            <span>Horário</span>
+            <input id="task-time" type="time" required>
+          </label>
+
+          <label>
+            <span>Categoria Customizada</span>
+            <input id="task-category-name" type="text" placeholder="Ex: Faculdade, Crossfit, Trabalho">
+          </label>
+
+          <label>
+            <span>Paleta de Cores</span>
+            <input class="color-input" id="task-category-color" type="color" value="#00b4d8">
+          </label>
+
+          <label>
+            <span>Etiqueta</span>
+            <input id="task-etiqueta" type="text" placeholder="Ex: Urgente, Lazer, Reunião, Foco">
+          </label>
+
+          <label>
+            <span>Prioridade</span>
+            <select id="task-priority">
+              <option value="Baixa">Baixa</option>
+              <option value="Média" selected>Média</option>
+              <option value="Alta">Alta</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Status</span>
+            <select id="task-status">
+              <option value="Pendente" selected>Pendente</option>
+              <option value="Em andamento">Em andamento</option>
+              <option value="Concluída">Concluída</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Observações</span>
+            <input id="task-notes" type="text" placeholder="Opcional">
+          </label>
+
+          <button class="modal-submit" type="submit">Salvar tarefa</button>
+        </form>
+      </section>
+    </div>
+
+    <div class="modal-backdrop" id="settings-modal" hidden>
+      <section class="task-modal" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+        <div class="modal-header">
+          <h2 id="settings-title">Configurações da Conta</h2>
+          <button class="modal-close" id="close-settings-modal" type="button" aria-label="Fechar">x</button>
+        </div>
+
+        <form class="task-form" id="settings-form">
+          <label>
+            <span>Nome</span>
+            <input id="settings-name" type="text" required>
+          </label>
+
+          <label>
+            <span>Email</span>
+            <input id="settings-email" type="email" required>
+          </label>
+
+          <label>
+            <span>Nova senha simulada</span>
+            <div class="password-control">
+              <input id="settings-password" type="password" placeholder="Deixe em branco para manter">
+              <button class="password-toggle" type="button" data-password-toggle="settings-password" aria-label="Revelar senha" aria-pressed="false">
+                <span class="password-eye" aria-hidden="true"></span>
+              </button>
+            </div>
+          </label>
+
+          <label>
+            <span>Tema preferido</span>
+            <select id="settings-theme">
+              <option value="dark">Escuro</option>
+              <option value="light">Claro</option>
+            </select>
+          </label>
+
+          <label class="settings-check">
+            <input id="settings-notifications" type="checkbox">
+            <span>Notificações ativadas</span>
+          </label>
+
+          <div class="task-panel-actions">
+            <button class="task-save-button" type="submit">Salvar Configurações</button>
+            <button class="task-delete-button" id="clear-user-tasks" type="button">Limpar minhas tarefas</button>
+          </div>
+        </form>
+      </section>
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
