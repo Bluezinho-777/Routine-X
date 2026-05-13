@@ -23,6 +23,9 @@ const loginPassword = document.getElementById("login-password");
 const passwordToggles = document.querySelectorAll("[data-password-toggle]");
 
 const selectedDate = document.getElementById("selected-date");
+const priorityFilter = document.getElementById("priority-filter");
+const taskSearch = document.getElementById("task-search");
+const sortFilter = document.getElementById("sort-filter");
 const currentDate = document.getElementById("current-date");
 const progressLabel = document.getElementById("progress-label");
 const progressFill = document.getElementById("progress-fill");
@@ -30,7 +33,6 @@ const taskCounter = document.getElementById("task-counter");
 const timelineList = document.getElementById("timeline-list");
 const filterLabel = document.getElementById("filter-label");
 const categoryList = document.getElementById("category-list");
-const priorityList = document.getElementById("priority-list");
 const openTaskModal = document.getElementById("open-task-modal");
 const closeTaskModal = document.getElementById("close-task-modal");
 const taskModal = document.getElementById("task-modal");
@@ -46,6 +48,7 @@ const taskPriority = document.getElementById("task-priority");
 const taskStatus = document.getElementById("task-status");
 const taskNotes = document.getElementById("task-notes");
 const themeToggle = document.getElementById("theme-toggle");
+const sidebarToggle = document.getElementById("sidebar-toggle");
 
 const sidebarUserTrigger = document.getElementById("sidebar-user-trigger");
 const sidebarAvatar = document.querySelector(".sidebar-avatar");
@@ -56,6 +59,7 @@ const settingsName = document.getElementById("settings-name");
 const settingsEmail = document.getElementById("settings-email");
 const settingsPassword = document.getElementById("settings-password");
 const settingsTheme = document.getElementById("settings-theme");
+const settingsAvatar = document.getElementById("settings-avatar");
 const settingsNotifications = document.getElementById("settings-notifications");
 const clearUserTasks = document.getElementById("clear-user-tasks");
 
@@ -68,7 +72,10 @@ let appState = readAppState();
 let currentMode = "login";
 let activeCategory = "all";
 let activePriority = "all";
+let activeSearch = "";
+let activeSort = "chronological";
 let expandedTaskId = null;
+let pendingAvatarImage = "";
 
 const holidays = {
   "01-01": "Confraternização Universal",
@@ -139,7 +146,9 @@ function migrateLegacyState() {
       theme: legacyTheme || "dark",
       defaultViewDate: "today",
       notificationsEnabled: true,
+      sidebarCollapsed: false,
     },
+    avatarImage: "",
     tasks,
   };
 
@@ -154,7 +163,8 @@ function saveAppState() {
 }
 
 function getCurrentUser() {
-  return appState.users.find((user) => user.id === appState.currentUserId) || null;
+  const user = appState.users.find((item) => item.id === appState.currentUserId);
+  return user ? normalizeUser(user) : null;
 }
 
 function updateCurrentUser(updater) {
@@ -163,10 +173,25 @@ function updateCurrentUser(updater) {
       return user;
     }
 
-    return updater(user);
+    return normalizeUser(updater(normalizeUser(user)));
   });
 
   saveAppState();
+}
+
+function normalizeUser(user) {
+  return {
+    ...user,
+    avatarImage: user.avatarImage || "",
+    settings: {
+      theme: "dark",
+      defaultViewDate: "today",
+      notificationsEnabled: true,
+      sidebarCollapsed: false,
+      ...(user.settings || {}),
+    },
+    tasks: (user.tasks || []).map(normalizeTask),
+  };
 }
 
 function normalizeTask(task) {
@@ -278,15 +303,105 @@ function setCurrentDate() {
   currentDate.textContent = formatter.format(new Date(`${selectedDate.value}T12:00:00`));
 }
 
+function syncPriorityFilterColor() {
+  priorityFilter.classList.remove("is-low", "is-medium", "is-high");
+
+  if (priorityFilter.value === "Baixa") {
+    priorityFilter.classList.add("is-low");
+  }
+
+  if (priorityFilter.value === "Média") {
+    priorityFilter.classList.add("is-medium");
+  }
+
+  if (priorityFilter.value === "Alta") {
+    priorityFilter.classList.add("is-high");
+  }
+}
+
+function applySidebarState() {
+  const user = getCurrentUser();
+  const isCollapsed = Boolean(user?.settings.sidebarCollapsed);
+
+  dashboardScreen.classList.toggle("is-sidebar-collapsed", isCollapsed);
+  sidebarToggle.setAttribute("aria-pressed", String(isCollapsed));
+  sidebarToggle.setAttribute("aria-label", isCollapsed ? "Expandir menu lateral" : "Recolher menu lateral");
+}
+
+function toggleSidebar() {
+  updateCurrentUser((user) => ({
+    ...user,
+    settings: {
+      ...user.settings,
+      sidebarCollapsed: !user.settings.sidebarCollapsed,
+    },
+  }));
+
+  applySidebarState();
+}
+
+function renderUserAvatar(user) {
+  sidebarAvatar.innerHTML = "";
+
+  if (user?.avatarImage) {
+    const image = document.createElement("img");
+    image.src = user.avatarImage;
+    image.alt = "";
+    sidebarAvatar.append(image);
+    return;
+  }
+
+  sidebarAvatar.textContent = user?.name ? getInitials(user.name) : "";
+}
+
+function sortTasks(tasks) {
+  const priorityRanking = {
+    alta: 0,
+    alto: 0,
+    media: 1,
+    média: 1,
+    medio: 1,
+    médio: 1,
+    baixa: 2,
+    baixo: 2,
+  };
+
+  const normalizeText = (value) => String(value || "")
+    .trim()
+    .toLocaleLowerCase("pt-BR")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+
+  const getPriorityRank = (priority) => priorityRanking[normalizeText(priority)] ?? 3;
+  const getChronologicalValue = (task) => `${task.date || ""}T${task.time || "00:00"}`;
+  const getAlphabeticalValue = (task) => normalizeText(task.title);
+
+  return [...tasks].sort((a, b) => {
+    if (activeSort === "priority") {
+      return getPriorityRank(a.priority) - getPriorityRank(b.priority)
+        || getChronologicalValue(a).localeCompare(getChronologicalValue(b));
+    }
+
+    if (activeSort === "alphabetical") {
+      return getAlphabeticalValue(a).localeCompare(getAlphabeticalValue(b), "pt-BR")
+        || getChronologicalValue(a).localeCompare(getChronologicalValue(b));
+    }
+
+    return getChronologicalValue(a).localeCompare(getChronologicalValue(b));
+  });
+}
+
 function getVisibleTasks() {
   const user = getCurrentUser();
   const tasks = user?.tasks || [];
 
-  return tasks
+  const filteredTasks = tasks
     .filter((task) => task.date === selectedDate.value)
     .filter((task) => activeCategory === "all" || task.categoryName === activeCategory)
     .filter((task) => activePriority === "all" || task.priority === activePriority)
-    .sort((a, b) => a.time.localeCompare(b.time));
+    .filter((task) => task.title.toLowerCase().includes(activeSearch));
+
+  return sortTasks(filteredTasks);
 }
 
 function updateProgress() {
@@ -447,9 +562,10 @@ function showDashboard() {
   authScreen.hidden = true;
   dashboardScreen.hidden = false;
   dashboardUserName.textContent = user?.name || "Usuário";
-  sidebarAvatar.textContent = user?.name ? getInitials(user.name) : "";
+  renderUserAvatar(user);
   setCurrentDate();
   applyTheme();
+  applySidebarState();
   renderDashboard();
   setFeedback();
 }
@@ -577,7 +693,9 @@ function createAccount() {
       theme: "dark",
       defaultViewDate: "today",
       notificationsEnabled: true,
+      sidebarCollapsed: false,
     },
+    avatarImage: "",
     tasks: [],
   };
 
@@ -613,6 +731,8 @@ function openSettings() {
   settingsPassword.value = "";
   settingsTheme.value = user.settings.theme;
   settingsNotifications.checked = user.settings.notificationsEnabled;
+  pendingAvatarImage = "";
+  settingsAvatar.value = "";
   settingsModal.hidden = false;
   settingsName.focus();
 }
@@ -620,11 +740,13 @@ function openSettings() {
 function closeSettings() {
   settingsModal.hidden = true;
   settingsForm.reset();
+  pendingAvatarImage = "";
   resetPasswordVisibility(settingsPassword);
 }
 
-function saveSettings() {
+async function saveSettings() {
   const email = settingsEmail.value.trim().toLowerCase();
+  const currentUser = getCurrentUser();
   const duplicate = appState.users.some(
     (user) => user.email === email && user.id !== appState.currentUserId,
   );
@@ -634,11 +756,18 @@ function saveSettings() {
     return;
   }
 
+  const selectedAvatarFile = settingsAvatar.files?.[0];
+  const loadedAvatarImage = selectedAvatarFile ? await readAvatarFile(selectedAvatarFile) : "";
+  const avatarImage = selectedAvatarFile
+    ? loadedAvatarImage || currentUser?.avatarImage || ""
+    : pendingAvatarImage || currentUser?.avatarImage || "";
+
   updateCurrentUser((user) => ({
     ...user,
     name: settingsName.value.trim(),
     email,
     password: settingsPassword.value || user.password,
+    avatarImage,
     settings: {
       ...user.settings,
       theme: settingsTheme.value,
@@ -650,6 +779,29 @@ function saveSettings() {
   showDashboard();
 }
 
+function handleAvatarSelection() {
+  const file = settingsAvatar.files?.[0];
+  if (!file) {
+    pendingAvatarImage = "";
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.addEventListener("load", () => {
+    pendingAvatarImage = String(reader.result || "");
+  });
+  reader.readAsDataURL(file);
+}
+
+function readAvatarFile(file) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.addEventListener("load", () => resolve(String(reader.result || "")));
+    reader.addEventListener("error", () => resolve(""));
+    reader.readAsDataURL(file);
+  });
+}
+
 function clearCurrentUserTasks() {
   updateCurrentUser((user) => ({
     ...user,
@@ -657,6 +809,12 @@ function clearCurrentUserTasks() {
   }));
   closeSettings();
   renderDashboard();
+}
+
+function confirmLogout() {
+  if (confirm("Você tem certeza?")) {
+    showLogin();
+  }
 }
 
 function bindEvents() {
@@ -678,11 +836,13 @@ function bindEvents() {
     login();
   });
 
-  dashboardLogout.addEventListener("click", showLogin);
+  dashboardLogout.addEventListener("click", confirmLogout);
   themeToggle.addEventListener("click", toggleTheme);
+  sidebarToggle.addEventListener("click", toggleSidebar);
   sidebarUserTrigger.addEventListener("click", openSettings);
   closeSettingsModal.addEventListener("click", closeSettings);
   clearUserTasks.addEventListener("click", clearCurrentUserTasks);
+  settingsAvatar.addEventListener("change", handleAvatarSelection);
   settingsForm.addEventListener("submit", (event) => {
     event.preventDefault();
     saveSettings();
@@ -706,6 +866,25 @@ function bindEvents() {
   selectedDate.addEventListener("change", () => {
     expandedTaskId = null;
     setCurrentDate();
+    renderDashboard();
+  });
+
+  priorityFilter.addEventListener("change", () => {
+    activePriority = priorityFilter.value;
+    syncPriorityFilterColor();
+    expandedTaskId = null;
+    renderDashboard();
+  });
+
+  taskSearch.addEventListener("input", () => {
+    activeSearch = taskSearch.value.trim().toLowerCase();
+    expandedTaskId = null;
+    renderDashboard();
+  });
+
+  sortFilter.addEventListener("change", () => {
+    activeSort = sortFilter.value;
+    expandedTaskId = null;
     renderDashboard();
   });
 
@@ -744,15 +923,6 @@ function bindEvents() {
     renderDashboard();
   });
 
-  priorityList.addEventListener("click", (event) => {
-    const button = event.target.closest("[data-priority]");
-    if (!button) return;
-    activePriority = button.dataset.priority;
-    priorityList.querySelectorAll("[data-priority]").forEach((item) => item.classList.remove("is-active"));
-    button.classList.add("is-active");
-    expandedTaskId = null;
-    renderDashboard();
-  });
 }
 
 function togglePasswordVisibility(button) {
@@ -784,6 +954,7 @@ function resetAllPasswordVisibility() {
 function init() {
   selectedDate.value = getTodayDate();
   taskDate.value = selectedDate.value;
+  syncPriorityFilterColor();
   setCurrentDate();
   bindEvents();
 

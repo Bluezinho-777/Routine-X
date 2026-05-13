@@ -80,9 +80,14 @@
   </main>
 
   <main class="dashboard-shell" id="dashboard-screen" hidden>
+    <button class="sidebar-toggle" id="sidebar-toggle" type="button" aria-label="Recolher menu lateral" aria-pressed="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </button>
+
     <aside class="dashboard-sidebar" aria-label="Navegação principal">
       <div class="sidebar-logo">
-        <span class="sidebar-logo-mark" aria-hidden="true"></span>
         <span>Routine X</span>
       </div>
 
@@ -92,53 +97,69 @@
           <strong id="dashboard-user-name">Usuário</strong>
           <span>Rotina ativa</span>
         </div>
+        <span class="sidebar-user-icon" aria-hidden="true">⚙</span>
       </button>
 
       <nav class="sidebar-section" aria-label="Menu principal">
         <span class="sidebar-label">Menu</span>
-        <button class="sidebar-link is-active" type="button">Dashboard</button>
+        <button class="sidebar-link is-active" type="button">
+          <span class="nav-icon" aria-hidden="true">⌂</span>
+          Área de trabalho
+        </button>
+        <button class="sidebar-link" type="button">
+          <span class="nav-icon" aria-hidden="true">▥</span>
+          Estatísticas
+        </button>
+        <button class="sidebar-link" type="button">
+          <span class="nav-icon" aria-hidden="true">▣</span>
+          Cronograma
+        </button>
       </nav>
 
       <div class="sidebar-section" aria-label="Categorias">
-        <span class="sidebar-label">Categorias</span>
+        <span class="sidebar-label"><span class="nav-icon" aria-hidden="true">●</span> Categorias</span>
         <div class="category-list" id="category-list"></div>
       </div>
 
-      <div class="sidebar-section" aria-label="Prioridade">
-        <span class="sidebar-label">Prioridade</span>
-        <div class="priority-list" id="priority-list">
-          <button class="category-filter is-active" type="button" data-priority="all">
-            <span class="category-dot" style="--dot-color: #a0aec0"></span>
-            Todas
-          </button>
-          <button class="category-filter" type="button" data-priority="Baixa">
-            <span class="category-dot" style="--dot-color: #65e4a3"></span>
-            Baixa
-          </button>
-          <button class="category-filter" type="button" data-priority="Média">
-            <span class="category-dot" style="--dot-color: #f4b740"></span>
-            Média
-          </button>
-          <button class="category-filter" type="button" data-priority="Alta">
-            <span class="category-dot" style="--dot-color: #ff6174"></span>
-            Alta
-          </button>
-        </div>
-      </div>
-
-      <button class="sidebar-logout" id="dashboard-logout" type="button">Sair</button>
+      <button class="sidebar-logout" id="dashboard-logout" type="button">
+        <span class="nav-icon" aria-hidden="true">↪</span>
+        Sair
+      </button>
     </aside>
 
     <section class="dashboard-main" aria-labelledby="daily-title">
       <header class="dashboard-header">
         <div>
-          <span class="dashboard-kicker">Dashboard</span>
+          <span class="dashboard-kicker">Área de trabalho</span>
           <h1 id="daily-title">Visão Diária</h1>
           <p id="current-date">Hoje</p>
-          <label class="date-filter" for="selected-date">
-            <span>Data selecionada</span>
-            <input id="selected-date" type="date">
-          </label>
+          <div class="header-filters">
+            <input id="selected-date" type="hidden">
+
+            <label class="date-filter priority-filter-control" for="priority-filter">
+              <span><span class="nav-icon" aria-hidden="true">◇</span> Prioridade</span>
+              <select id="priority-filter">
+                <option value="all">Todas</option>
+                <option value="Baixa">Baixa</option>
+                <option value="Média">Média</option>
+                <option value="Alta">Alta</option>
+              </select>
+            </label>
+
+            <label class="date-filter sort-filter-control" for="sort-filter">
+              <span><span class="nav-icon" aria-hidden="true">⇅</span> Ordenação</span>
+              <select id="sort-filter">
+                <option value="chronological">Ordem cronológica</option>
+                <option value="priority">Por prioridade</option>
+                <option value="alphabetical">Ordem alfabética</option>
+              </select>
+            </label>
+
+            <label class="date-filter search-filter-control" for="task-search">
+              <span><span class="nav-icon" aria-hidden="true">⌕</span> Pesquisar tarefa</span>
+              <input id="task-search" type="search" placeholder="Digite o nome do cartão">
+            </label>
+          </div>
         </div>
 
         <div class="header-actions">
@@ -273,6 +294,11 @@
               <option value="dark">Escuro</option>
               <option value="light">Claro</option>
             </select>
+          </label>
+
+          <label>
+            <span>Imagem do perfil</span>
+            <input id="settings-avatar" type="file" accept="image/*">
           </label>
 
           <label class="settings-check">
