@@ -108,7 +108,7 @@
         <span>Routine X</span>
       </div>
 
-      <button class="sidebar-user" id="sidebar-user-trigger" type="button" aria-label="Abrir configurações da conta">
+      <button class="sidebar-user" id="sidebar-user-trigger" type="button" aria-label="Abrir configurações da conta" data-tooltip="Configurações">
         <div class="sidebar-avatar" aria-hidden="true"></div>
         <div>
           <strong id="dashboard-user-name">Usuário</strong>
@@ -119,85 +119,183 @@
 
       <nav class="sidebar-section" aria-label="Menu principal">
         <span class="sidebar-label">Menu</span>
-        <button class="sidebar-link is-active" type="button">
+        <button class="sidebar-link is-active" id="workspace-menu" type="button" data-tooltip="Área de trabalho">
           <span class="nav-icon" aria-hidden="true">⌂</span>
           Área de trabalho
         </button>
-        <button class="sidebar-link" type="button">
+        <button class="sidebar-link" id="routines-menu" type="button" data-tooltip="Rotinas">
+          <span class="nav-icon" aria-hidden="true">◫</span>
+          Rotinas
+        </button>
+        <button class="sidebar-link" type="button" data-tooltip="Calendário">
+          <span class="nav-icon" aria-hidden="true">▣</span>
+          Calendário
+        </button>
+        <button class="sidebar-link" type="button" data-tooltip="Estatísticas">
           <span class="nav-icon" aria-hidden="true">▥</span>
           Estatísticas
-        </button>
-        <button class="sidebar-link" type="button">
-          <span class="nav-icon" aria-hidden="true">▣</span>
-          Cronograma
         </button>
       </nav>
 
       <div class="sidebar-section" aria-label="Categorias">
-        <span class="sidebar-label"><span class="nav-icon" aria-hidden="true">●</span> Categorias</span>
+        <span class="sidebar-label"><span class="nav-icon" aria-hidden="true">●</span> Board</span>
         <div class="category-list" id="category-list"></div>
       </div>
 
-      <button class="sidebar-logout" id="dashboard-logout" type="button">
+      <button class="sidebar-link sidebar-theme-toggle" id="sidebar-theme-toggle" type="button" data-tooltip="Tema">
+        <span class="nav-icon" id="sidebar-theme-icon" aria-hidden="true">☾</span>
+        Tema
+      </button>
+
+      <button class="sidebar-logout" id="dashboard-logout" type="button" data-tooltip="Sair">
         <span class="nav-icon" aria-hidden="true">↪</span>
         Sair
       </button>
     </aside>
 
     <section class="dashboard-main" aria-labelledby="daily-title">
-      <header class="dashboard-header">
-        <div>
-          <span class="dashboard-kicker">Área de trabalho</span>
-          <h1 id="daily-title">Visão Diária</h1>
-          <p id="current-date">Hoje</p>
-          <div class="header-filters">
-            <input id="selected-date" type="hidden">
+      <header class="dashboard-header" id="daily-header">
+        <div class="dashboard-topbar">
+          <div class="dashboard-greeting">
+            <span class="greeting-avatar" aria-hidden="true">👋</span>
+            <div>
+              <span class="dashboard-kicker">Área de trabalho</span>
+              <h1 id="daily-title">Olá, Usuário!</h1>
+              <p id="current-date">Vamos organizar sua rotina hoje</p>
+            </div>
+          </div>
 
-            <label class="date-filter priority-filter-control" for="priority-filter">
-              <span><span class="nav-icon" aria-hidden="true">◇</span> Prioridade</span>
-              <select id="priority-filter">
-                <option value="all">Todas</option>
-                <option value="Baixa">Baixa</option>
-                <option value="Média">Média</option>
-                <option value="Alta">Alta</option>
-              </select>
-            </label>
+          <label class="top-search" for="task-search">
+            <span class="nav-icon" aria-hidden="true">⌕</span>
+            <input id="task-search" type="search" placeholder="Pesquisar tarefas...">
+            <kbd>Ctrl+K</kbd>
+          </label>
 
-            <label class="date-filter sort-filter-control" for="sort-filter">
-              <span><span class="nav-icon" aria-hidden="true">⇅</span> Ordenação</span>
-              <select id="sort-filter">
-                <option value="chronological">Ordem cronológica</option>
-                <option value="priority">Por prioridade</option>
-                <option value="alphabetical">Ordem alfabética</option>
-              </select>
-            </label>
-
-            <label class="date-filter search-filter-control" for="task-search">
-              <span><span class="nav-icon" aria-hidden="true">⌕</span> Pesquisar tarefa</span>
-              <input id="task-search" type="search" placeholder="Digite o nome do cartão">
-            </label>
+          <div class="header-actions">
+            <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Ativar tema claro">☾</button>
+            <div class="quick-create-menu" aria-label="Criar">
+              <button class="quick-create-button" id="header-new-card" type="button">
+                <span aria-hidden="true">+</span>
+                Novo cartão
+              </button>
+              <button class="quick-create-button" id="header-new-folder" type="button">
+                <span aria-hidden="true">▣</span>
+                Nova pasta
+              </button>
+            </div>
           </div>
         </div>
 
-        <div class="header-actions">
-          <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Ativar tema claro">☾</button>
-          <div class="progress-card" aria-label="Progresso diário">
+        <div class="dashboard-stats" aria-label="Resumo do quadro">
+          <article class="stat-card">
+            <span class="stat-icon" aria-hidden="true">▣</span>
+            <div>
+              <span>Total</span>
+              <strong id="stat-total">0</strong>
+              <small>tarefas</small>
+            </div>
+          </article>
+          <article class="stat-card is-success">
+            <span class="stat-icon" aria-hidden="true">✓</span>
+            <div>
+              <span>Concluídas</span>
+              <strong id="stat-completed">0</strong>
+              <small>tarefas</small>
+            </div>
+          </article>
+          <article class="stat-card">
+            <span class="stat-icon progress-ring" id="stat-progress-ring" aria-hidden="true"></span>
+            <div>
+              <span>Progresso</span>
+              <strong id="stat-progress">0%</strong>
+              <small>do quadro</small>
+            </div>
+          </article>
+          <article class="stat-card">
+            <span class="stat-icon" aria-hidden="true">▣</span>
+            <div>
+              <span>Pastas</span>
+              <strong id="stat-folders">0</strong>
+              <small>ativas</small>
+            </div>
+          </article>
+        </div>
+
+        <div class="dashboard-filterbar">
+          <input id="selected-date" type="hidden">
+
+          <label class="date-filter priority-filter-control" for="priority-filter">
+            <span><span class="nav-icon" aria-hidden="true">◇</span> Prioridade</span>
+            <select id="priority-filter">
+              <option value="all">Todas</option>
+              <option value="Baixa">Baixa</option>
+              <option value="Média">Média</option>
+              <option value="Alta">Alta</option>
+            </select>
+          </label>
+
+          <label class="date-filter sort-filter-control" for="sort-filter">
+            <span><span class="nav-icon" aria-hidden="true">⇅</span> Ordenação</span>
+            <select id="sort-filter">
+              <option value="chronological">Ordem cronológica</option>
+              <option value="priority">Por prioridade</option>
+              <option value="alphabetical">Ordem alfabética</option>
+            </select>
+          </label>
+
+          <button class="reset-filters-button" id="reset-filters" type="button">
+            <span aria-hidden="true">↺</span>
+            Redefinir
+          </button>
+        </div>
+
+        <div class="progress-card" aria-label="Progresso diário">
           <strong id="progress-label">0/0 Concluídas - 0%</strong>
           <span class="task-counter" id="task-counter">0 tarefas no dia</span>
           <div class="progress-track">
             <div class="progress-fill" id="progress-fill"></div>
           </div>
-          </div>
         </div>
       </header>
 
-      <section class="timeline-section" aria-labelledby="timeline-title">
+      <section class="timeline-section" id="daily-timeline" aria-labelledby="timeline-title">
         <div class="timeline-heading">
-          <h2 id="timeline-title">Linha do Tempo</h2>
+          <h2 id="timeline-title">Quadro de Trabalho</h2>
           <span id="filter-label">Todas as categorias</span>
         </div>
 
         <div class="timeline-list" id="timeline-list" aria-live="polite"></div>
+      </section>
+
+      <section class="routines-view" id="routines-view" aria-labelledby="routines-title" hidden>
+        <header class="routines-header">
+          <div>
+            <span class="dashboard-kicker">Rotinas</span>
+            <h1 id="routines-title">Semana organizada</h1>
+            <p>Visualize compromissos, estudos e hábitos em cards semanais.</p>
+          </div>
+
+          <div class="routine-week-controls" aria-label="Controles da semana">
+            <button class="routine-icon-button" id="routine-prev-week" type="button" aria-label="Semana anterior">‹</button>
+            <strong id="routine-month-label">MAI 26</strong>
+            <button class="routine-icon-button" id="routine-next-week" type="button" aria-label="Próxima semana">›</button>
+            <button class="routine-today-button" id="routine-today" type="button">Exibir hoje</button>
+            <button class="routine-calendar-button" id="routine-calendar-toggle" type="button" aria-label="Abrir calendário mensal">📅</button>
+          </div>
+        </header>
+
+        <div class="routine-calendar-panel" id="routine-calendar-panel" hidden>
+          <div class="routine-calendar-heading">
+            <strong>Calendário anual</strong>
+            <button class="modal-close" id="routine-calendar-close" type="button" aria-label="Fechar calendário">x</button>
+          </div>
+          <div class="routine-month-grid" id="routine-month-grid"></div>
+          <div class="routine-calendar-tooltip" id="routine-calendar-tooltip" role="tooltip" hidden></div>
+        </div>
+
+        <nav class="routine-day-tabs" id="routine-day-tabs" aria-label="Dias da semana"></nav>
+
+        <div class="routine-week-grid" id="routine-week-grid"></div>
       </section>
     </section>
 
@@ -245,8 +343,12 @@
           </label>
 
           <label>
-            <span>Etiqueta</span>
-            <input id="task-etiqueta" type="text" placeholder="Ex: Urgente, Lazer, Reunião, Foco">
+            <span>Tempo</span>
+            <select id="task-tempo">
+              <option value="Apagar após a data">Apagar após a data</option>
+              <option value="Deixar marcado" selected>Deixar marcado</option>
+              <option value="Relembrar até desativar manualmente">Relembrar até desativar manualmente</option>
+            </select>
           </label>
 
           <label>
@@ -274,6 +376,77 @@
 
           <button class="modal-submit" type="submit">Salvar tarefa</button>
         </form>
+      </section>
+    </div>
+
+    <div class="modal-backdrop task-editor-backdrop" id="task-editor-modal" hidden>
+      <section class="task-editor-modal" role="dialog" aria-modal="true" aria-labelledby="task-editor-title">
+        <div class="task-editor-shell">
+          <div class="task-editor-heading">
+            <div>
+              <span class="dashboard-kicker">Editar cartão</span>
+              <h2 id="task-editor-title">Cartão</h2>
+              <p id="task-editor-meta">Organize os detalhes do cartão</p>
+            </div>
+            <button class="modal-close" id="close-task-editor-modal" type="button" aria-label="Fechar">x</button>
+          </div>
+          <div id="task-editor-content"></div>
+        </div>
+      </section>
+    </div>
+
+    <div class="modal-backdrop" id="create-choice-modal" hidden>
+      <section class="task-modal compact-modal" role="dialog" aria-modal="true" aria-labelledby="create-choice-title">
+        <div class="modal-header">
+          <h2 id="create-choice-title">O que você deseja criar?</h2>
+          <button class="modal-close" id="close-create-choice-modal" type="button" aria-label="Fechar">x</button>
+        </div>
+
+        <div class="choice-actions">
+          <button class="choice-card-button" id="create-card-option" type="button">
+            <span>+</span>
+            Cartão
+          </button>
+          <button class="choice-card-button" id="create-folder-option" type="button">
+            <span>▣</span>
+            Pasta
+          </button>
+          <button class="routine-cancel-button" id="cancel-create-choice" type="button">Cancelar</button>
+        </div>
+      </section>
+    </div>
+
+    <div class="modal-backdrop" id="folder-modal" hidden>
+      <section class="task-modal compact-modal" role="dialog" aria-modal="true" aria-labelledby="folder-modal-title">
+        <div class="modal-header">
+          <h2 id="folder-modal-title">Nova Pasta</h2>
+          <button class="modal-close" id="close-folder-modal" type="button" aria-label="Fechar">x</button>
+        </div>
+
+        <form class="task-form" id="folder-form">
+          <label>
+            <span>Nome da pasta</span>
+            <input id="folder-name" type="text" placeholder="Ex: Trabalho, Estudos, Eventos" required>
+          </label>
+
+          <label>
+            <span>Cor da pasta</span>
+            <input class="color-input" id="folder-color" type="color" value="#00b4d8">
+          </label>
+
+          <button class="modal-submit" type="submit">Criar pasta</button>
+        </form>
+      </section>
+    </div>
+
+    <div class="modal-backdrop" id="folder-view-modal" hidden>
+      <section class="task-modal folder-view-modal" role="dialog" aria-modal="true" aria-labelledby="folder-view-title">
+        <div class="modal-header">
+          <h2 id="folder-view-title">Pasta</h2>
+          <button class="modal-close" id="close-folder-view-modal" type="button" aria-label="Fechar">x</button>
+        </div>
+
+        <div class="folder-view-content" id="folder-view-content"></div>
       </section>
     </div>
 
@@ -330,6 +503,15 @@
         </form>
       </section>
     </div>
+
+    <aside class="routine-detail-panel" id="routine-detail-panel" aria-labelledby="routine-detail-title" hidden>
+      <div class="routine-detail-header">
+        <span id="routine-detail-type">Digital</span>
+        <button class="modal-close" id="routine-detail-close" type="button" aria-label="Fechar detalhes">x</button>
+      </div>
+      <h2 id="routine-detail-title">Detalhes da rotina</h2>
+      <div class="routine-detail-content" id="routine-detail-content"></div>
+    </aside>
   </main>
 
   <script src="app.js"></script>
