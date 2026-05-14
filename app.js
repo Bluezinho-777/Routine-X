@@ -112,11 +112,11 @@ function readAppState() {
 
   try {
     return {
-      ...structuredClone(defaultState),
+      ...cloneDefaultState(),
       ...JSON.parse(rawState),
     };
   } catch {
-    return structuredClone(defaultState);
+    return cloneDefaultState();
   }
 }
 
@@ -126,7 +126,7 @@ function migrateLegacyState() {
   const legacyTheme = localStorage.getItem(LEGACY_THEME_KEY);
 
   if (!legacyTasks && !legacyName) {
-    return structuredClone(defaultState);
+    return cloneDefaultState();
   }
 
   let tasks = [];
@@ -138,7 +138,7 @@ function migrateLegacyState() {
   }
 
   const user = {
-    id: crypto.randomUUID(),
+    id: createId(),
     name: legacyName || "Usuário",
     email: "usuario@local.app",
     password: "123456",
@@ -160,6 +160,22 @@ function migrateLegacyState() {
 
 function saveAppState() {
   localStorage.setItem(APP_KEY, JSON.stringify(appState));
+}
+
+function cloneDefaultState() {
+  if (typeof structuredClone === "function") {
+    return structuredClone(defaultState);
+  }
+
+  return JSON.parse(JSON.stringify(defaultState));
+}
+
+function createId() {
+  if (globalThis.crypto?.randomUUID) {
+    return crypto.randomUUID();
+  }
+
+  return `id-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 }
 
 function getCurrentUser() {
@@ -198,7 +214,7 @@ function normalizeTask(task) {
   const status = task.status || (task.isCompleted ? "Concluída" : "Pendente");
 
   return {
-    id: task.id || crypto.randomUUID(),
+    id: task.id || createId(),
     title: task.title || "Sem título",
     description: task.description || "",
     date: task.date || getTodayDate(),
@@ -595,7 +611,7 @@ function closeModal() {
 
 function createTask() {
   const newTask = normalizeTask({
-    id: crypto.randomUUID(),
+    id: createId(),
     title: taskTitle.value.trim(),
     description: taskDescription.value.trim(),
     date: taskDate.value,
@@ -685,7 +701,7 @@ function createAccount() {
   }
 
   const user = {
-    id: crypto.randomUUID(),
+    id: createId(),
     name: signupName.value.trim(),
     email,
     password: signupPassword.value,
