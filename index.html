@@ -10,7 +10,13 @@
 <body>
   <main class="auth-container" id="auth-screen">
     <section class="auth-showcase" aria-label="Apresentação do Routine X">
-      <h2 class="showcase-logo">Routine<span>X</span></h2>
+      <div class="brand-lockup showcase-logo" aria-label="Routine X">
+        <span class="brand-symbol" aria-hidden="true">
+          <span class="brand-check"></span>
+          <span class="brand-x">X</span>
+        </span>
+        <span class="brand-word">Routine<span>X</span></span>
+      </div>
       <p class="showcase-tagline">Organização de tarefas</p>
 
       <div class="showcase-copy">
@@ -30,7 +36,11 @@
     <section class="auth-card" aria-labelledby="auth-title">
       <header class="auth-header">
         <div class="auth-brand">
-          <span>Routine X</span>
+          <span class="brand-symbol brand-symbol-compact" aria-hidden="true">
+            <span class="brand-check"></span>
+            <span class="brand-x">X</span>
+          </span>
+          <span class="brand-word">Routine<span>X</span></span>
         </div>
 
         <h1 class="auth-title" id="auth-title">Entrar</h1>
@@ -105,7 +115,11 @@
 
     <aside class="dashboard-sidebar" aria-label="Navegação principal">
       <div class="sidebar-logo">
-        <span>Routine X</span>
+        <span class="brand-symbol brand-symbol-compact" aria-hidden="true">
+          <span class="brand-check"></span>
+          <span class="brand-x">X</span>
+        </span>
+        <span class="brand-word">Routine<span>X</span></span>
       </div>
 
       <button class="sidebar-user" id="sidebar-user-trigger" type="button" aria-label="Abrir configurações da conta" data-tooltip="Configurações">
@@ -173,16 +187,6 @@
 
           <div class="header-actions">
             <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Ativar tema claro">☾</button>
-            <div class="quick-create-menu" aria-label="Criar">
-              <button class="quick-create-button" id="header-new-card" type="button">
-                <span aria-hidden="true">+</span>
-                Novo cartão
-              </button>
-              <button class="quick-create-button" id="header-new-folder" type="button">
-                <span aria-hidden="true">▣</span>
-                Nova pasta
-              </button>
-            </div>
           </div>
         </div>
 

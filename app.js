@@ -37,8 +37,6 @@ const statProgress = document.getElementById("stat-progress");
 const statFolders = document.getElementById("stat-folders");
 const statProgressRing = document.getElementById("stat-progress-ring");
 const resetFilters = document.getElementById("reset-filters");
-const headerNewCard = document.getElementById("header-new-card");
-const headerNewFolder = document.getElementById("header-new-folder");
 const timelineList = document.getElementById("timeline-list");
 const filterLabel = document.getElementById("filter-label");
 const categoryList = document.getElementById("category-list");
@@ -2110,8 +2108,6 @@ function bindEvents() {
   themeToggle.addEventListener("click", toggleTheme);
   sidebarThemeToggle.addEventListener("click", toggleTheme);
   resetFilters.addEventListener("click", resetWorkspaceFilters);
-  headerNewCard.addEventListener("click", () => openModal());
-  headerNewFolder.addEventListener("click", openFolderModal);
   sidebarToggle.addEventListener("click", toggleSidebar);
   workspaceMenu.addEventListener("click", showWorkspaceView);
   routinesMenu.addEventListener("click", showRoutinesView);
